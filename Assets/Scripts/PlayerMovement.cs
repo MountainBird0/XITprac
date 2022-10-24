@@ -5,8 +5,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] InputActionAsset playerControls; // 업데이트
+    [SerializeField] 
+    InputActionAsset playerControls; // 업데이트
     InputAction movement;            // 입력작업
+
+    //추가
+    InputAction clickA;
 
 
     CharacterController character;
@@ -23,8 +27,12 @@ public class PlayerMovement : MonoBehaviour
         movement.canceled += OnMovementChanged; // 버튼이 올라오고 내려오고?
         movement.Enable();
 
-        character = GetComponent<CharacterController>(); 
-        
+        clickA = gameplayActionMap.FindAction("Click");
+
+        clickA.performed += ClickAButton;
+        clickA.Enable();
+
+        character = GetComponent<CharacterController>();         
     }
 
     private void FixedUpdate()
@@ -36,5 +44,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 direction = context.ReadValue<Vector2>();
         moveVector = new Vector3(direction.x, 0, direction.y);
+    }
+
+    public void ClickAButton(InputAction.CallbackContext context)
+    {
+        float isClick = context.ReadValue<float>();
+        if(isClick > 0.1)
+        {
+            Debug.Log("click A"); // 키보드 M
+        }
     }
 }
