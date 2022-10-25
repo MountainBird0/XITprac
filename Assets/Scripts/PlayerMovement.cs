@@ -5,12 +5,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     InputActionAsset playerControls; // 업데이트
     InputAction movement;            // 입력작업
 
     //추가
     InputAction clickA;
+    InputAction clickXY;
 
 
     CharacterController character;
@@ -22,17 +23,21 @@ public class PlayerMovement : MonoBehaviour
         var gameplayActionMap = playerControls.FindActionMap("Default"); // 액션맵을 찾아옴
 
         movement = gameplayActionMap.FindAction("Move");
-
-        movement.performed += OnMovementChanged;
-        movement.canceled += OnMovementChanged; // 버튼이 올라오고 내려오고?
+        movement.started += OnMovementChanged;   // => Debug.Log("started");
+        movement.performed += OnMovementChanged; // => Debug.Log("performed");
+        movement.canceled += OnMovementChanged;  // => Debug.Log("canceled");
         movement.Enable();
 
         clickA = gameplayActionMap.FindAction("Click");
-
-        clickA.performed += ClickAButton;
+        clickA.started += ClickAButton;
         clickA.Enable();
 
-        character = GetComponent<CharacterController>();         
+        clickXY = gameplayActionMap.FindAction("TwoClick");
+        clickXY.started += ClickXYButton;
+        clickXY.Enable();
+
+
+        character = GetComponent<CharacterController>();
     }
 
     private void FixedUpdate()
@@ -44,14 +49,24 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 direction = context.ReadValue<Vector2>();
         moveVector = new Vector3(direction.x, 0, direction.y);
+        Debug.Log("move");
     }
 
     public void ClickAButton(InputAction.CallbackContext context)
     {
         float isClick = context.ReadValue<float>();
-        if(isClick > 0.1)
+        if (isClick > 0.1)
         {
             Debug.Log("click A"); // 키보드 M
+        }
+    }
+
+    public void ClickXYButton(InputAction.CallbackContext context)
+    {
+        float isClick = context.ReadValue<float>();
+        if (isClick > 0.1)
+        {
+            Debug.Log("click X & Y"); // 키보드 OP
         }
     }
 }
